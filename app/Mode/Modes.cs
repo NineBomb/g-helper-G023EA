@@ -11,6 +11,7 @@
             { "limit_slow", "int" },
             { "limit_fast", "int" },
             { "limit_cpu", "int" },
+            { "limit_apu", "int" },   // ← 新增：APU PPT（offset 0x18）
             { "limit_crossload", "int" },
             { "limit_gpucpu", "int" },
             { "limit_cputemp", "int" },
