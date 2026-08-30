@@ -225,28 +225,28 @@ namespace PawnIO
         {
             if (!CanSetTDP()) return SmuStatus.Failed;
         
-            // 优先尝试：通过 mailbox 命令写（更稳，避免覆盖其它字段）
             uint v = EncodeCurve(watts);
-            SmuStatus status = Family switch
+        
+            // 尝试1：通过 mailbox 命令下发（与 SetCoAll 风格一致）
+            SmuStatus mailboxStatus = Family switch
             {
-                CpuFamily.Mobile     => SendMp1(0x65, v),  // Phoenix / HawkPoint / Rembrandt
+                CpuFamily.Mobile => SendMp1(0x65, v),
                 CpuFamily.StrixPoint => SendMp1(0x65, v),
-                CpuFamily.StrixHalo => SendMp1(0x65, v), // Ryzen AI MAX (GZ302EA)
+                CpuFamily.StrixHalo => SendMp1(0x65, v) is var s && s == SmuStatus.OK ? s : SendPsmu(0x5D, v),
                 _ => SmuStatus.Failed,
             };
         
-            // Fallback：如果 mailbox 命令不被接受（某些 BIOS 版本），直接覆盖 PM Table
-            if (status != SmuStatus.OK)
-            {
-                ulong[] resolveOut = new ulong[2];
-                if (_io.Execute("ioctl_resolve_pm_table", null, resolveOut))
-                {
-                    ulong pmBase = resolveOut[1];
-                    if (WriteReg(pmBase + 0x18, v))  // 0x18 = APU slow limit 偏移
-                        return SmuStatus.OK;
-                }
-            }
-            return status;
+            if (mailboxStatus == SmuStatus.OK) return SmuStatus.OK;
+        
+            // 尝试2：直接覆盖 PM Table（fallback）
+            ulong[] resolveOut = new ulong[2];
+            if (!_io.Execute("ioctl_resolve_pm_table", null, resolveOut))
+                return mailboxStatus;
+        
+            ulong pmBase = resolveOut[1];
+            return WriteReg(unchecked((uint)(pmBase + 0x18)), v)
+                ? SmuStatus.OK
+                : mailboxStatus;
         }
         public bool GetCodeName(out CpuCodeName codeName)
         {
