@@ -1084,7 +1084,7 @@ namespace GHelper
             panelPower.AutoSize = true;
             panelPower.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panelPower.Controls.Add(panelApplyPower);
-            panelPower.Controls.Add(panelApuSlow)
+            panelPower.Controls.Add(panelApuSlow);
             panelPower.Controls.Add(panelCPUTemp);
             panelPower.Controls.Add(panelGPUtoCPU);
             panelPower.Controls.Add(panelCrossLoad);
