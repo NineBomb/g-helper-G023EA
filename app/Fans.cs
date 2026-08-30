@@ -1,4 +1,4 @@
-﻿using GHelper.Fan;
+using GHelper.Fan;
 using GHelper.Gpu.NVidia;
 using GHelper.Helpers;
 using GHelper.Mode;
@@ -149,12 +149,6 @@ namespace GHelper
             trackTotal.Minimum = AsusACPI.MinTotal;
 
             trackSlow.Maximum = AsusACPI.MaxTotal;
-            trackApuSlow.Maximum = AsusACPI.MaxTotal;   // 复用同一个150W 上限
-            trackApuSlow.Minimum = 5;
-            trackApuSlow.Scroll += TrackApuSlow_Scroll;
-            trackApuSlow.MouseUp += TrackPower_MouseUp;
-            trackApuSlow.KeyUp   += TrackPower_KeyUp;
-            labelApuSlow.Text = "APU PPT";
             trackSlow.Minimum = AsusACPI.MinTotal;
 
             trackCPU.Maximum = AsusACPI.MaxCPU;
@@ -1117,10 +1111,6 @@ namespace GHelper
             trackSlow.AccessibleName = labelLeftSlow.Text;
             trackFast.AccessibleName = labelLeftFast.Text;
             trackCPU.AccessibleName = labelLeftCPU.Text;
-
-            trackApuSlow.Value = AppConfig.GetMode("limit_apu",30); // 30W 是典型 APU 默认值
-            labelApuSlow.Text = $"APU PPT ({trackApuSlow.Value}W)";
-            
             trackCrossLoad.AccessibleName = labelLeftCrossLoad.Text;
             trackGPUtoCPU.AccessibleName = labelLeftGPUtoCPU.Text;
             trackCPUTemp.AccessibleName = labelLeftCPUTemp.Text;
@@ -1144,7 +1134,6 @@ namespace GHelper
             AppConfig.SetMode("limit_slow", trackSlow.Value);
             AppConfig.SetMode("limit_cpu", trackCPU.Value);
             AppConfig.SetMode("limit_fast", trackFast.Value);
-            AppConfig.SetMode("limit_apu", trackApuSlow.Value);
 
             if (Program.acpi.IsSupported(AsusACPI.PPT_CROSS9F)) AppConfig.SetMode("limit_crossload", trackCrossLoad.Value);
             if (Program.acpi.IsSupported(AsusACPI.PPT_GPUCPU9C)) AppConfig.SetMode("limit_gpucpu", trackGPUtoCPU.Value);
@@ -1165,11 +1154,7 @@ namespace GHelper
             if (trackSlow.Value > trackFast.Value) trackFast.Value = trackSlow.Value;
             SavePower();
         }
-        private void TrackApuSlow_Scroll(object? sender, EventArgs e)
-        {
-            labelApuSlow.Text = $"APU PPT ({trackApuSlow.Value}W)";
-            SavePower();
-        }
+
         private void TrackFast_Scroll(object? sender, EventArgs e)
         {
             if (trackFast.Value < trackSlow.Value) trackSlow.Value = trackFast.Value;
