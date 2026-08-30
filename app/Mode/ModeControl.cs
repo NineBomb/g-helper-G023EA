@@ -337,12 +337,19 @@ namespace GHelper.Mode
             int limit_total = AppConfig.GetMode("limit_total");
             int limit_slow = AppConfig.GetMode("limit_slow", limit_total);
             int limit_fast = AppConfig.GetMode("limit_fast", limit_slow);
+            int limit_apu   = AppConfig.GetMode("limit_apu");   // ← 新增这一行（默认 -1）
+            
 
             if (limit_total > AsusACPI.MaxTotal) return;
             if (limit_total < AsusACPI.MinTotal) return;
 
             smu.SetAllLimits(limit_total, limit_fast, limit_slow,
                 out SmuStatus stapm, out SmuStatus fast, out SmuStatus slow);
+            if (limit_apu > 0)
+        {
+            var apuStatus = smu.SetApuSlow(limit_apu);
+            Logger.WriteLine($"APU: {limit_apu}W {apuStatus}");
+        }
             if (init) Logger.WriteLine($"STAPM: {limit_total}W {stapm} | SLOW: {limit_slow}W {slow} | FAST: {limit_fast}W {fast}");
         }
 
