@@ -221,7 +221,22 @@ namespace PawnIO
                 _                                        => SmuStatus.Failed,
             };
         }
-
+        public SmuStatus SetApuSlow(int watts)
+        {
+            // PM Table offset 0x18 — APU 专属 slow PPT
+            // RyzenAdj / UXTU 做法：写 PM Table 的0x18 偏移
+            // 通过 SMU mailbox 命令（Family-specific）：
+            //   - Renoir / Mobile (Phoenix/HawkPoint/Rembrandt): MP1 0x65
+            //   - StrixHalo (Ryzen AI MAX):                    MP1 0x4D 或 PSMU 0x5D
+            //   - StrixPoint:                                  MP1 0x65 (与 Mobile 同)
+            uint v = EncodeCurve(watts);
+            return Family switch
+            {
+                CpuFamily.Renoir => SendMp1(0x65, v),
+                CpuFamily.Mobile or CpuFamily.StrixPoint or CpuFamily.StrixHalo            => SendMp1(0x65, v),  // Phoenix/HawkPoint/StrixPoint/StrixHalo
+                _ => SmuStatus.Failed,
+            };
+        }
         public bool GetCodeName(out CpuCodeName codeName)
         {
             codeName = CpuCodeName.Undefined;
