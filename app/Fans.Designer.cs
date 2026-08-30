@@ -115,6 +115,12 @@ namespace GHelper
             labelSlow = new Label();
             labelLeftSlow = new Label();
             trackSlow = new RTrackBar();
+            
+            panelAPUSlow = new Panel();
+            labelAPUSlow = new Label();
+            labelLeftAPUSlow = new Label();
+            trackAPUSlow = new RTrackBar();
+            
             panelCrossLoad = new Panel();
             labelCrossLoad = new Label();
             labelLeftCrossLoad = new Label();
@@ -1078,6 +1084,7 @@ namespace GHelper
             panelPower.AutoSize = true;
             panelPower.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             panelPower.Controls.Add(panelApplyPower);
+            panelPower.Controls.Add(panelApuSlow)
             panelPower.Controls.Add(panelCPUTemp);
             panelPower.Controls.Add(panelGPUtoCPU);
             panelPower.Controls.Add(panelCrossLoad);
