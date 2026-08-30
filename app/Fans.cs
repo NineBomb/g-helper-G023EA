@@ -149,6 +149,12 @@ namespace GHelper
             trackTotal.Minimum = AsusACPI.MinTotal;
 
             trackSlow.Maximum = AsusACPI.MaxTotal;
+            trackApuSlow.Maximum = AsusACPI.MaxTotal;   // 复用同一个150W 上限
+            trackApuSlow.Minimum = 5;
+            trackApuSlow.Scroll += TrackApuSlow_Scroll;
+            trackApuSlow.MouseUp += TrackPower_MouseUp;
+            trackApuSlow.KeyUp   += TrackPower_KeyUp;
+            labelApuSlow.Text = "APU PPT";
             trackSlow.Minimum = AsusACPI.MinTotal;
 
             trackCPU.Maximum = AsusACPI.MaxCPU;
