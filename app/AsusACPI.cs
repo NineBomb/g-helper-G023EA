@@ -364,7 +364,8 @@ public class AsusACPI
 
         if (AppConfig.IsZ1325())
         {
-            MaxTotal = 93;
+            MaxTotal = AppConfig.Get("max_total", 93);  // ← 改为读 config，缺省 93
+            MaxCPU  = AppConfig.Get("max_cpu",  93); // ← 可选：CPU PPT 也支持
         }
 
         if (AppConfig.IsOnlyAIMAX())
